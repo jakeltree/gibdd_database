@@ -99,6 +99,7 @@ class SelectionTree {
       Node *left, *right;
     };
     Node* root;
+
     void DestroyTree(Node* head) {
       if (head -> left != nullptr) {
                 DestroyTree(head -> left);
@@ -111,7 +112,8 @@ class SelectionTree {
 
     void Parse(Node* head, std::string token) {
       size_t found;
-      found = token.find(" ");
+      
+      //if
       found = token.find(" ");
       if (found != std::string::npos) {
         head -> value = "placeholder";
@@ -130,8 +132,10 @@ class SelectionTree {
       root = new Node;
       Parse(root, str);
     }
+
     ~SelectionTree() {
       DestroyTree(root);
+
     }
 };
 
@@ -140,6 +144,7 @@ class SelectionTree {
 
 int main() {
   std::string name="Петров|Petrov group>200 info [общежитие, холост] end"; //the string for the parser test
+  std::string name="Петров|Petrov"
   database::SelectionTree tr(name);
   std::cout << tr.root->left->value << std::endl;
 }

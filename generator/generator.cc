@@ -1,3 +1,6 @@
+// Generate the CSV file with the "fake" GIBDD records
+#include "generator.h"
+
 #include <chrono>
 #include <string>
 #include <iostream>
@@ -6,12 +9,15 @@
 #include <fstream>
 
 #include "date.h"
-#include "generator.h"
 
 #define sz(a) ((int)((a).size()))
-
 namespace generator {
 
+std::string output_path = "database.csv";
+const int NUM_PEOPLE = 1000; 
+const int ENTRIES_PER_PERSON = 40;
+
+// Generate a random number in the range [0, n)
 std::mt19937 rnd(std::chrono::steady_clock::now().time_since_epoch().count());
 std::random_device dev;
 std::mt19937 rng(dev());
@@ -20,7 +26,8 @@ int Rand(int n) {
   return dist(rng);
 }
 
-void Path2Vec(std::vector<std::string> &v, std::string path) {
+// Given the CSV file, download it contents to the vector
+void CSV2Vector(std::vector<std::string> &v, std::string path) {
   std::ifstream file(path);
   std::string temp;
   while (file >> temp) {
@@ -65,20 +72,18 @@ void GenerateARandomFine() {
 }
 
 void ProduceResult() {
-  int t;
-  std::cin >> t;
   std::vector<std::string> male_names, male_surnames, male_patronyms;
   std::vector<std::string> female_names, female_surnames, female_patronyms;
   std::vector<std::string> brands;
-  Path2Vec(male_names, "data/male_names.txt");
-  Path2Vec(male_surnames, "data/male_surnames.txt");
-  Path2Vec(male_patronyms, "data/male_patronyms.txt");
-  Path2Vec(female_names, "data/female_names.txt");
-  Path2Vec(female_surnames, "data/female_surnames.txt");
-  Path2Vec(female_patronyms, "data/female_patronyms.txt");
-  Path2Vec(brands, "data/brands.txt");
+  CSV2Vector(male_names, "data/male_names.csv");
+  CSV2Vector(male_surnames, "data/male_surnames.csv");
+  CSV2Vector(male_patronyms, "data/male_patronyms.csv");
+  CSV2Vector(female_names, "data/female_names.csv");
+  CSV2Vector(female_surnames, "data/female_surnames.csv");
+  CSV2Vector(female_patronyms, "data/female_patronyms.csv");
+  CSV2Vector(brands, "data/brands.csv");
 
-  while (t--) {
+  for (int i = 0; i < NUM_PEOPLE; i++) {
     std::string FIOnBrand;
     std::string sign;
     if (Rand(1)) {
@@ -95,9 +100,7 @@ void ProduceResult() {
                   brands[Rand(sz(brands))];
       sign = GenerateARandomSign();
     }
-    const int MAX_ENTRIES_PER_PERSON = 40;
-    int entries_per_person = Rand(MAX_ENTRIES_PER_PERSON) + 1;
-    while (entries_per_person--) {
+    for (int j = 0; j < ENTRIES_PER_PERSON; j++) {
       std::cout << FIOnBrand << ",";
       std::cout << sign << ",";
       GenerateARandomFine();
@@ -108,10 +111,3 @@ void ProduceResult() {
 
 
 } //namespace generator 
-
-int main() {
-  generator::ProduceResult();
-  std::cerr << std::endl << "finished in " <<
-    clock() * 1.0 / CLOCKS_PER_SEC << " sec" << std::endl;
-  return 0;
-}

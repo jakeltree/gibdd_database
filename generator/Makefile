@@ -13,9 +13,9 @@ BINS := $(SRCS:%.cc=%)
 
 all: ${BINS}
 
-%: %.o
-	@echo "Checking.."
-	${CC} ${LINKERFLAG} $< -o $@o
+#%: %.o
+#	@echo "Checking.."
+#	${CC} ${LINKERFLAG} $< -o $@o
 
 %.o: %.cc %.h
 	@echo "Creating object.."
