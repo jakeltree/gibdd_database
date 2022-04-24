@@ -1,35 +1,25 @@
-#ifndef DATABASE_DATABASE_H_
-#define DATABASE_DATABASE_H_
+#include <string>
+#include <vector>
+#include <iostream>
+#include <stack>
+#include <fstream>
+#include <sstream>
+#include <queue>
+
+#include "database.h"
+
+namespace database {
+
 class Seabase {
+  private:
     std::vector<std::string> fio, brand, sign, fine;
     std::stack<int> deleted_entries;
   public:
+    std::vector<std::string> row;
+    std::string line, word;
 
-    Seabase(std::string filepath = "database.csv") {
-      std::vector<std::string> row;
-      std::string line, word;
-      std::ifstream file(filepath);
-      if (file.is_open()) {
-        while(getline(file, line)) {
-          row.clear();
-          std::stringstream str(line);
-          getline(str, word, ',');
-          fio.push_back(word);
-          getline(str, word, ',');
-          brand.push_back(word);
-          getline(str, word, ',');
-          sign.push_back(word);
-          getline(str, word, ',');
-          fine.push_back(word);
-        }
-      }
-    }
-
-    void Test(int i) {
-      i--;
-      std::cout << fio[i] + "/" + brand[i] + "/" + sign[i] + "/" + fine[i] << std::endl;
-    }
-
+    Seabase(std::string filepath = "database.csv");
+    void Test(int i);
     void Add(std::string entry, int index) {
       if (index > (int) fio.size()) {
         std::cout << "ERROR: out of the range" << std::endl;
@@ -84,12 +74,40 @@ class Seabase {
 };
 
 class SelectionTree {
-  public:
-    struct Node;
+  public: 
+    struct Node {
+      std::string value;
+      Node *left, *right;
+    };
     Node* root;
 
-    void DestroyTree(Node* head);
-    void Parse(Node* head, std::string token);
+    void DestroyTree(Node* head) {
+      if (head -> left != nullptr) {
+                DestroyTree(head -> left);
+      }
+      if (head -> right != nullptr) {
+        DestroyTree(head -> right);
+      }
+      delete head;
+    }
+    //building a parse tree of the string
+    void Parse(Node* head, std::string token) {
+      size_t found;
+      found = token.find(" ");
+      if (found != std::string::npos) {
+        head -> value = "placeholder";
+        Node* left = new Node;
+        Node* right = new Node;
+        head -> left = left;
+        head -> right = right;
+        Parse(left, token.substr(0, found));
+        Parse(right, token.substr(found + 1, token.size() - found - 1));
+        return;
+      }
+      //can't divide string any more
+      head -> value = token;
+    }
+
 
   public:
     SelectionTree(std::string str) {
@@ -97,8 +115,18 @@ class SelectionTree {
       Parse(root, str);
     }
 
+    // Convert parse tree to the selection 
     ~SelectionTree() {
       DestroyTree(root);
     }
 };
-#endif //DATABASE_DATABASE_H_
+
+
+}  //namespace database
+
+int main() {
+  std::string name="select FIO='Оксана Яшина Филипповна' howdi_ho how is it going end"; //the string for the parser test
+  //std::string FIO=Петров|Petrov"
+  database::SelectionTree tr(name);
+  std::cout << tr.root->left->value << std::endl;
+}

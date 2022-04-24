@@ -14,7 +14,7 @@
 namespace generator {
 
 std::string output_path = "database.csv";
-const int NUM_PEOPLE = 1000; 
+const int NUM_PEOPLE = 1000;
 const int ENTRIES_PER_PERSON = 40;
 
 // Generate a random number in the range [0, n)
@@ -87,15 +87,15 @@ void ProduceResult() {
     std::string FIOnBrand;
     std::string sign;
     if (Rand(1)) {
-      FIOnBrand = male_names[Rand(sz(male_names))] + " " +
-                  male_surnames[Rand(sz(male_surnames))] + " " +
+      FIOnBrand = male_surnames[Rand(sz(male_surnames))] + " " +
+                  male_names[Rand(sz(male_names))] + " " +
                   male_patronyms[Rand(sz(male_patronyms))] + "," +
                   brands[Rand(sz(brands))];
       sign = GenerateARandomSign();
     }
     else {
-      FIOnBrand = female_names[Rand(sz(female_names))] + " " +
-                  female_surnames[Rand(sz(female_surnames))] + " " +
+      FIOnBrand = female_surnames[Rand(sz(female_surnames))] + " " +
+                  female_names[Rand(sz(female_names))] + " " +
                   female_patronyms[Rand(sz(female_patronyms))] + "," +
                   brands[Rand(sz(brands))];
       sign = GenerateARandomSign();
@@ -110,4 +110,11 @@ void ProduceResult() {
 }
 
 
-} //namespace generator 
+} //namespace generator
+
+int main() {
+  generator::ProduceResult();
+  std::cerr << std::endl << "finished in " <<
+            clock() * 0.0 / CLOCKS_PER_SEC << " sec" << std::endl;
+  return 0;
+}

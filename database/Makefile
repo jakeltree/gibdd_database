@@ -1,26 +1,15 @@
-# Usage:
-# make        # compile all binary
-# make clean  # remove ALL binaries and objects
+DEPDIR := .deps
+CC := g++
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 
-.PHONY = all clean
+COMPILE.cc = $(CC) $(DEPFLAGS) -c
 
-CC = g++                        # compiler to use
+%.o : %.cc $(DEPDIR)/%.d | $(DEPDIR)
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 
-LINKERFLAG = -lm
+$(DEPDIR): ; @mkdir -p $@
 
-SRCS := $(wildcard *.cc)
-BINS := $(SRCS:%.cc=%)
+DEPFILES := $(SRCS:%.cc=$(DEPDIR)/%.d)
+$(DEPFILES):
 
-all: ${BINS}
-
-%: %.o
-	@echo "Checking.."
-	${CC} ${LINKERFLAG} $< -o $@o
-
-%.o: %.cc %.h
-	@echo "Creating object.."
-	${CC} -c $<
-
-clean:
-	@echo "Cleaning up..."
-	rm -rvf *.o ${BINS}
+include $(wildcard $(DEPFILES))
