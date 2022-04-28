@@ -6,124 +6,16 @@
 #include <sstream>
 #include <queue>
 
-
 namespace database {
-  bool IsSymbolInParanthesis(std::string str, int pos) {
-    // given a position of the symbol, check whether it is inside a closed paranthesis
-    // true -- true
-    // false -- false
-
-    // check whether left paranthesis is correct
-    for (int i = pos - 1; i >= 0; i--) {
-      std::cout << i << std::endl;
-      if (str[i] == ')')
-        return false;
-      if (str[i] == '(')
-        break;
-      if (str[i] == 0)
-        return false;
-    }
-    // check whether right paranthesis is correct
-    for (int i = pos + 1; i < str.size(); i++) {
-      std::cout << i << std::endl;
-      if (str[i] == '(')
-        return false;
-      if (str[i] == ')')
-        break;
-      if (str[i] == str.size() - 1)
-        return false;
-    }
-    return true;
-  }
-class Seabase {
-  private:
-    std::vector<std::string> fio, brand, sign, fine;
-    std::stack<int> deleted_entries;
-  public:
-    std::vector<std::string> row;
-    std::string line, word;
-
-    Seabase(std::string filepath = "database.csv") {
-      std::ifstream file(filepath);
-      if (file.is_open()) {
-        while(getline(file, line)) {
-          row.clear();
-          std::stringstream str(line);
-          getline(str, word, ',');
-          fio.push_back(word);
-          getline(str, word, ',');
-          brand.push_back(word);
-          getline(str, word, ',');
-          sign.push_back(word);
-          getline(str, word, ',');
-          fine.push_back(word);
-        }
-      }
-    }
-
-    void Test(int i) {
-      i--;
-      std::cout << fio[i] + "/" + brand[i] + "/" + sign[i] + "/" + fine[i] << std::endl;
-    }
-
-    void Add(std::string entry, int index) {
-      if (index > (int) fio.size()) {
-        std::cout << "ERROR: out of the range" << std::endl;
-        return;
-      }
-      index--;
-      if (!deleted_entries.empty()) {
-        std::stringstream str(entry);
-        int i = deleted_entries.top();
-        deleted_entries.pop();
-        getline(str, word, ',');
-        fio[i] = word;
-        getline(str, word, ',');
-        brand[i] = word;
-        getline(str, word, ',');
-        sign[i] = word;
-        getline(str, word, ',');
-        fine[i] = word;
-      }
-      else {
-        std::stringstream str(line);
-        getline(str, word, ',');
-        fio.push_back(word);
-        getline(str, word, ',');
-        brand.push_back(word);
-        getline(str, word, ',');
-        sign.push_back(word);
-        getline(str, word, ',');
-        fine.push_back(word);
-      }
-    }
-
-    void Delete(int index) {
-      if (index > (int) fio.size()) {
-        std::cout << "ERROR: out of range" << std::endl;
-        return;
-      }
-      index--;
-      deleted_entries.push(index);
-    }
-
-    void PrintSelection(std::queue<int> select) {
-      if (!select.empty()) {
-        int i = select.front();
-        i--;
-        std::cout << fio[i] << " " << brand[i] << " " << sign[i] << " " << fine[i] << std::endl;
-        select.pop();
-        PrintSelection(select);
-      }
-    }
+class Seabase; 
+struct Node {
+  std::string value;
+  Node *left, *right;
 };
 
 class SelectionTree {
-  public:
-    struct Node {
-      std::string value;
-      Node *left, *right;
-    };
+  private:
+    
     Node* root;
 
     void DestroyTree(Node* head) {
@@ -175,23 +67,25 @@ class SelectionTree {
       head -> right = nullptr;
     }
 
-  void printBT(const std::string& prefix, const Node* node, bool isLeft) {
-    if (node != nullptr) {
-      std::cout << prefix;
-
-      std::cout << (isLeft ? "├──" : "└──" );
-
-      // print the value of the node
-      std::cout << node->value << std::endl;
-
-      // enter the next tree level - left and right branch
-      printBT(prefix + (isLeft ? "│   " : "    "), node->left, true);
-      printBT(prefix + (isLeft ? "│   " : "    "), node->right, false);
-    }
-  }
-
 
   public:
+    Node* Root() const {
+      return root;
+    }
+    void printBT(const std::string& prefix, const Node* node, bool isLeft) {
+      if (node != nullptr) {
+        std::cout << prefix;
+
+        std::cout << (isLeft ? "├──" : "└──" );
+
+        // print the value of the node
+        std::cout << node->value << std::endl;
+  
+        // enter the next tree level - left and right branch
+        printBT(prefix + (isLeft ? "│   " : "    "), node->left, true);
+        printBT(prefix + (isLeft ? "│   " : "    "), node->right, false);
+      }
+    }
     SelectionTree(std::string str) {
       root = new Node;
       Parse(root, str);
@@ -205,12 +99,147 @@ class SelectionTree {
     }
 };
 
+class Seabase {
+  private:
+    std::vector<std::string> fio, brand, sign, fine;
+    std::stack<int> deleted_entries;
+  public:
+    std::vector<std::string> row;
+    std::string line, word;
+
+    Seabase(std::string filepath) {
+      std::ifstream file(filepath);
+      if (file.is_open()) {
+        while(getline(file, line)) {
+          row.clear();
+          std::stringstream str(line); getline(str, word, ',');
+          for (int i = 0; i < word.size(); i++) {
+            if (word[i] == ' ')
+              word[i] = '_';
+            }
+          fio.push_back(word);
+          getline(str, word, ',');
+          brand.push_back(word);
+          getline(str, word, ',');
+          sign.push_back(word);
+          getline(str, word, ',');
+          fine.push_back(word);
+        }
+      }
+    }
+
+    void Test(int i) {
+      i--;
+      std::cout << fio[i] + "/" + brand[i] + "/" + sign[i] + "/" + fine[i] << std::endl;
+    }
+    void SearchInFieldAndAddToQueue(std::string entry, std::string field, std::queue <int> &q) {
+      // field 
+      // FIO: fio
+      // SIGN: sign
+      if (field == "FIO") {
+        for (int i = 0; i < fio.size(); i++) {
+          if (fio[i] == entry) {
+            q.push(i + 1);
+          }
+        }
+      }
+      if (field == "SIGN") {
+        for (int i = 0; i < sign.size(); i++) {
+          if (sign[i] == entry) {
+            q.push(i + 1);
+          }
+        }
+      }
+    }
+    void Add(std::string entry, int index) {
+      if (index > (int) fio.size()) {
+        std::cout << "ERROR: out of the range" << std::endl;
+        return;
+      }
+      index--;
+      if (!deleted_entries.empty()) {
+        std::stringstream str(entry);
+        int i = deleted_entries.top();
+        deleted_entries.pop();
+        getline(str, word, ',');
+        // preprocess fio
+        for (int i = 0; i < word.size(); i++) {
+          if (word[i] == ' ')
+            word[i] = '_';
+        }
+        fio[i] = word;
+        getline(str, word, ',');
+        brand[i] = word;
+        getline(str, word, ',');
+        sign[i] = word;
+        getline(str, word, ',');
+        fine[i] = word;
+      }
+      else {
+        std::stringstream str(line);
+        getline(str, word, ',');
+        fio.push_back(word);
+        getline(str, word, ',');
+        brand.push_back(word);
+        getline(str, word, ',');
+        sign.push_back(word);
+        getline(str, word, ',');
+        fine.push_back(word);
+      }
+    }
+
+    void Delete(int index) {
+      if (index > (int) fio.size()) {
+        std::cout << "ERROR: out of range" << std::endl;
+        return;
+      }
+      index--;
+      deleted_entries.push(index);
+    }
+
+    void PrintSelection(std::queue<int> select) {
+      if (!select.empty()) {
+        int i = select.front();
+        i--;
+        if (i < 0 && i >= fio.size()) {
+          std::cout << "ERROR: ACCESING ELEMENT OUT OF LIMITS" << std::endl;
+        }
+        else {
+          std::cout << fio[i] << " " << brand[i] << " " << sign[i] << " " << fine[i] << std::endl;
+        }
+        select.pop();
+        PrintSelection(select);
+      }
+    }
+    std::queue<int> ParseTree2Selection(const SelectionTree &tr) {
+      Node* pos = tr.Root();
+      std::queue<int> q;  
+      pos = pos -> right;
+      while (pos -> value != "end") {
+        if (pos -> left -> value == "=") {
+          SearchInFieldAndAddToQueue(pos -> left -> right -> value, pos -> left -> left -> value, q); 
+        }
+        pos = pos -> right;
+      } 
+      return q;
+    }
+};
+
+
 
 }  //namespace database
 
 int main() {
-  std::string name="select FIO=Оксана_Яшина_Филипповна howdi_ho how is it going end";
-  //std::string FIO=Петров|Petrov"
+  std::string name="select FIO=Оксана_Яшина_Филипповна FIO=Олеся_Емельянова_Феликсовна end";
+  std::string path="database.csv";
   database::SelectionTree tr(name);
+  database::Seabase b(path);
+  std::queue<int> q;
+  for (int i = 1; i <= 27; i++) {
+    q.push(i);
+  }
   tr.Print();
+  std::cout << std::endl << std::endl;
+  b.PrintSelection(b.ParseTree2Selection(tr));
+  return 0;
 }
