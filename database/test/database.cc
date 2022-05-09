@@ -6,27 +6,18 @@
 #include <sstream>
 #include <queue>
 
+#include "database.h"
 namespace database {
-class Seabase; 
-struct Node {
-  std::string value;
-  Node *left, *right;
-};
 
-class SelectionTree {
-  private:
-    
-    Node* root;
-
-    void DestroyTree(Node* head) {
+void SelectionTree::DestroyTree(Node* head) {
       if (head -> left != nullptr) {
         DestroyTree(head -> left);
-      }
-      if (head -> right != nullptr) {
-        DestroyTree(head -> right);
-      }
-      delete head;
     }
+    if (head -> right != nullptr) {
+    DestroyTree(head -> right);
+  }
+  delete head;
+}
 
     // build parse tree of the string
     int ParseByDelimiter(Node* head, std::string token, std::string delimiter) {
@@ -303,3 +294,11 @@ class Seabase {
 
 
 }  //namespace database
+
+int main() {
+ std::string name="select FIO=Оксана_Яшина_Филипповна FIO=Олеся_Емельянова_Феликсовна SIGN=Н371ЕН40 end";
+  std::string path="database.csv";
+ database::SelectionTree tr(name);
+ tr.Print();
+b.PrintSelection(b.ParseTree2Selection(tr));
+}

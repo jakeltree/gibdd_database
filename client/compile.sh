@@ -1,0 +1,1 @@
+g++ -W -Wall -g cli_tcp.cpp -o cli_tcp

@@ -54,7 +54,6 @@ class SelectionTree {
     }
     void Parse(Node* head, std::string token) {
       // parsing preprocessing 
-      int is_paranthesis_open = 0;
       if (ParseByDelimiter(head, token, " ")) {
         return;
       }
@@ -112,55 +111,55 @@ class Seabase {
   private:
     std::vector<std::string> fio, brand, sign, fine;
     std::stack<int> deleted_entries;
-    void AddToQueueEqual(std::string entry, std::string field, std::queue <int> &q) {
+    void AddToQueueEqual(std::string entry, std::string field, std::queue <size_t> &q) {
       // field 
       // FIO: fio
       // SIGN: sign
       if (field == "FIO") {
-        for (int i = 0; i < fio.size(); i++) {
+        for (size_t i = 0; i < fio.size(); i++) {
           if (fio[i] == entry) {
             q.push(i + 1);
           }
         }
       }
       if (field == "SIGN") {
-        for (int i = 0; i < sign.size(); i++) {
+        for (size_t i = 0; i < sign.size(); i++) {
           if (sign[i] == entry) {
             q.push(i + 1);
           }
         }
       }
     }
-    void AddToQueueInRange(std::string entry1, std::string entry2, std::string field, std::queue <int> &q) {
+    void AddToQueueInRange(std::string entry1, std::string entry2, std::string field, std::queue <size_t> &q) {
       // field 
       // FIO: fio
       // SIGN: sign
       std::cout << entry1 << std::endl << entry2 << std::endl << field;
       if (field == "FIO") {
-        for (int i = 0; i < fio.size(); i++) {
+        for (size_t i = 0; i < fio.size(); i++) {
           if (fio[i] >= entry1 && fio[i] <= entry2) {
             q.push(i + 1);
           }
         }
       }
       if (field == "SIGN") {
-        for (int i = 0; i < sign.size(); i++) {
+        for (size_t i = 0; i < sign.size(); i++) {
           if (sign[i] >= entry1 && sign[i] <= entry2) {
             q.push(i + 1);
           }
         }
       }
     }
-    void AddToQueueLessThan(std::string entry, std::string field, std::queue <int> &q) {
+    void AddToQueueLessThan(std::string entry, std::string field, std::queue <size_t> &q) {
       if (field == "FIO") {
-        for (int i = 0; i < fio.size(); i++) {
+        for (size_t i = 0; i < fio.size(); i++) {
           if (fio[i] <= entry) {
             q.push(i + 1);
           }
         }
       }
       if (field == "SIGN") {
-        for (int i = 0; i < sign.size(); i++) {
+        for (size_t i = 0; i < sign.size(); i++) {
           if (sign[i] <= entry) {
             q.push(i + 1);
           }
@@ -168,16 +167,16 @@ class Seabase {
       }
    }
 
-    void AddToQueueMoreThan(std::string entry, std::string field, std::queue <int> &q) {
+    void AddToQueueMoreThan(std::string entry, std::string field, std::queue <size_t> &q) {
       if (field == "FIO") {
-        for (int i = 0; i < fio.size(); i++) {
+        for (size_t i = 0; i < fio.size(); i++) {
           if (fio[i] >= entry) {
             q.push(i + 1);
           }
         }
       }
       if (field == "SIGN") {
-        for (int i = 0; i < sign.size(); i++) {
+        for (size_t i = 0; i < sign.size(); i++) {
           if (sign[i] >= entry) {
             q.push(i + 1);
           }
@@ -194,7 +193,7 @@ class Seabase {
         while(getline(file, line)) {
           row.clear();
           std::stringstream str(line); getline(str, word, ',');
-          for (int i = 0; i < word.size(); i++) {
+          for (size_t i = 0; i < word.size(); i++) {
             if (word[i] == ' ')
               word[i] = '_';
             }
@@ -209,7 +208,7 @@ class Seabase {
       }
     } 
     void Print() {
-      for (int i = 0; i < fio.size(); i++) {
+      for (size_t i = 0; i < fio.size(); i++) {
         if (fio[i] != "DELETED")
           std::cout << fio[i] << " " << brand[i] << " " << sign[i] << " " << fine[i] << std::endl;
       }
@@ -225,7 +224,7 @@ class Seabase {
         deleted_entries.pop();
         getline(str, word, ',');
         // preprocess fio
-        for (int i = 0; i < word.size(); i++) {
+        for (size_t i = 0; i < word.size(); i++) {
           if (word[i] == ' ')
             word[i] = '_';
         }
@@ -260,11 +259,12 @@ class Seabase {
       fio[index] = "DELETED";
     }
 
-    void PrintSelection(std::queue<int> select) {
-      if (!select.empty()) {
-        int i = select.front();
+
+    void PrintSelection(std::queue<size_t> select) {
+      while(!select.empty()) {
+        size_t i = select.front();
         i--;
-        if (i < 0 && i >= fio.size()) {
+        if (i >= fio.size()) {
           std::cout << "ERROR: ACCESING ELEMENT OUT OF LIMITS" << std::endl;
         }
         else {
@@ -272,12 +272,28 @@ class Seabase {
             std::cout << fio[i] << " " << brand[i] << " " << sign[i] << " " << fine[i] << std::endl;
         }
         select.pop();
-        PrintSelection(select);
       }
     }
-    std::queue<int> ParseTree2Selection(const SelectionTree &tr) {
+
+    void SelectionToFile(std::queue<size_t> select, std::string path) {
+      std::ofstream file(path);
+      while (!select.empty()) {
+        size_t i = select.front();
+        i--;
+        if (i >= fio.size()) {
+          std::cout << "ERROR: ACCESSING ELEMENT OUT OF LIMITS" << std::endl;
+        }
+        else {
+          if (fio[i] != "DELETED")
+            file << fio[i] << " " << brand[i] << " " << sign[i] << " " << fine[i] << std::endl;
+        }
+        select.pop();
+      }
+      file.close();
+    }
+    std::queue<size_t> ParseTreeToSelection(const SelectionTree &tr) {
       Node* pos = tr.Root();
-      std::queue<int> q;  
+      std::queue<size_t> q;  
       pos = pos -> right;
       while (pos -> value != "end") {
         if (pos -> left -> value == "=") {
