@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset ="unicode">
+<title> Проверка штрафов ГИБДД </title>
+</head>
+<body>
+  <h2> Проверка штрафов ГИБДД </h2>
+<form name="myform" action="http://localhost:5555" method="get">
+<input name="request" type="text" width="20"> <br>
+ФИО <input name="rb1" type="radio" value="check1">
+Гос. номер <input name="rb1" type="radio" value="check2" checked> 
+<br>
+<input name="sub" type="submit" value="Send">
+</form>
+</body>
+</html>
+<p>Штрафы</p>
+<table>
+  <tr>
+    <th>ФИО</th>
+    <th>Марка автомобиля</th>
+    <th>Гос. номер</th>
+    <th>Дата выдачи штрафа</th>
+    <th>Дата истечения штрафа</th>
+    <th>Размер штрафа</th>
+  </tr>
+  <tr>
+    <td>Оксана Яшина Филипповна</td>
+    <td>Kia</td>
+    <td>О603НН17</td>
+    <td>2022-01-19</td>
+    <td>2021-11-20</td>
+    <td>2800</td>
+  </tr>
+</table>
