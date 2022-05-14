@@ -2,7 +2,7 @@
  *  В.Д.Валединский
  *  Простейший пример TCP клиента и сервера.
  *
- *  Файлы    
+ *  Файлы
  *  cli_tcp.cpp  - пример TCP клиента
  *  ser_tcp_select.cpp - пример TCP сервера c использованием select()
  *  ser_tcp_poll.cpp   - пример TCP сервера c использованием poll()
@@ -15,7 +15,7 @@
  *  регистр и отсылает обратно клиенту. Если клиент посылает строку
  *  содержащую слово stop, то сервер закрывает соединение с этим клиентом,
  *  а клиент заканчивает свою работу.
- *  Клиент и сервер печатают на экран протокол своей работы т.е. 
+ *  Клиент и сервер печатают на экран протокол своей работы т.е.
  *  разные данные, которые они получают или отсылают.
  *
  *  Для ясности примеры составлены максимально просто и не анализируют
@@ -95,18 +95,18 @@ int  main (void)
           perror("accept");
           exit (EXIT_FAILURE);
        } else {
-          pid = fork(); 
+          pid = fork();
           if (pid == 0) {
-              // порожденный процесс 
+              // порожденный процесс
               close(sock);
               while ( ProcessClientRequest(new_sock) );
-              return 0; 
+              return 0;
           } else {
-              // родительский процесс 
-              while ( waitpid(-1, nullptr, WNOHANG) > 0 );   
-          }   
-       }   
-    } 
+              // родительский процесс
+              while ( waitpid(-1, nullptr, WNOHANG) > 0 );
+          }
+       }
+    }
 }
 
 bool  ProcessClientRequest (int cli_socket)
@@ -114,11 +114,11 @@ bool  ProcessClientRequest (int cli_socket)
     char buf[BUFLEN];
     if ( !readFromClient (cli_socket, buf) ) {
         printf("read error: connection is closed\n");
-        close(cli_socket); 
+        close(cli_socket);
         return false;
-    } 
+    }
     writeToClient (cli_socket, buf);
-    
+
     return true;
 }
 
@@ -144,13 +144,13 @@ int  readFromClient (int fd, char *buf)
         return nbytes;
     }
 }
-char HexSymToAnsiSym(string str) 
+char HexSymToAnsiSym(string str)
 {
-    unsigned int x;   
+    unsigned int x;
     std::stringstream ss;
     ss << std::hex << str;
     ss >> x;
-    char c = (char) x; 
+    char c = (char) x;
     return c;
 }
 string ProcessRequest(string request)
@@ -189,7 +189,7 @@ string ProcessRequest(string request)
 }
 void ProcessHTML(stringstream &html, string & request)
 {
-    #define TBUFLEN 64    
+    #define TBUFLEN 64
     char tbuf[TBUFLEN] = {0};
     html.clear();
     html << "<!DOCTYPE html>";
@@ -235,7 +235,7 @@ void ProcessHTML(stringstream &html, string & request)
 bool  writeToClient (int fd, char *buf)
 {
     int  nbytes;
-	stringstream head; 
+	stringstream head;
 	stringstream html;
 	string request = "";
 
@@ -253,7 +253,7 @@ bool  writeToClient (int fd, char *buf)
         printf("post request: %s\n", request.c_str());
     }
 
-    // ответ на нераспознанные запросы    
+    // ответ на нераспознанные запросы
     if (request != "/" && request.find("request") == string::npos)  {
         head << "HTTP/1.1 404 Not found\r\n";
         head << "Connection: close\r\n";
