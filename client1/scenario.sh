@@ -1,5 +1,6 @@
 #!/bin/bash
-path="/home/littytree/Documents/MSU/ЭВМ/gibdd_database/client1"
+path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+echo "Client1 scenario.sh was launched. pathh is ${path}"
 
 time1=3
 time2=4
